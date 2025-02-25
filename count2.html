@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: "Montserrat", sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, rgba(224, 221, 242, 0.7), rgba(156, 246, 248, 0.7));
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        main {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            color: #333;
+        }
+
+        #display {
+            width: 100%;
+            height: 60px;
+            font-size: 36px;
+            text-align: right;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s;
+        }
+
+        #display:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table tr td {
+            padding: 2px;
+        }
+
+        input[type="button"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #e0f7fa;
+            color: #007bff;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+        }
+
+        input[type="button"].red {
+            background: #ffccbc;
+            color: #d32f2f;
+        }
+
+        input[type="button"]:hover {
+            background: #b2ebf2;
+            transform: translateY(-2px);
+        }
+
+        input[type="button"]:active {
+            transform: translateY(1px);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Стили для контейнера конвертации чисел */
+        .conversion-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* Стили для элементов конвертации чисел (select, input) */
+        .conversion-element {
+            width: 22%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        /* Скрываем label */
+        #inputType,
+        #resultType {
+            display: none;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"
+        integrity="sha512-BbVEDjbqdN3Eow8+empLMrJlxXRj5nEitiCAK5A1pUr66+jLVejo3PmjIaucRnjlB0P9R3rBUs3g5jXc8ti+fQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <main>
+        <h1>Калькулятор</h1>
+        <form>
+            <table>
+                <tr>
+                    <td colspan="6">
+                        <input id="display" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="blu" type="button" value="1" onclick="display.value += '1'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="2" onclick="display.value += '2'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="3" onclick="display.value += '3'" />
+                    </td>
+                    <td>
+                        <input class="red" type="button" value="C" onclick="display.value = ''" />
+                    </td>
+                    <td>
+                        <input class="red" type="button" value="⇐" onclick="backspace()" />
+                    </td>
+                    <td>
+                        <input class="red" type="button" value="=" onclick="calculate()" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="blu" type="button" value="4" onclick="display.value += '4'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="5" onclick="display.value += '5'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="6" onclick="display.value += '6'" />
+                    </td>
+                    <td>
+                        <input type="button" value="-" onclick="display.value += '-'" />
+                    </td>
+                    <td>
+                        <input type="button" value="%" onclick="display.value += '%'" />
+                    </td>
+                    <td>
+                        <input type="button" value="cos" onclick="display.value += 'cos('" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="blu" type="button" value="7" onclick="display.value += '7'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="8" onclick="display.value += '8'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="9" onclick="display.value += '9'" />
+                    </td>
+                    <td>
+                        <input type="button" value="x" onclick="display.value += '*'" />
+                    </td>
+                    <td>
+                        <input type="button" value="!" onclick="display.value += '!'" />
+                    </td>
+                    <td>
+                        <input type="button" value="sin" onclick="display.value += 'sin('" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="button" value="." onclick="display.value += '.'" />
+                    </td>
+                    <td>
+                        <input class="blu" type="button" value="0" onclick="display.value += '0'" />
+                    </td>
+                    <td>
+                        <input type="button" value="," onclick="display.value += ','" />
+                    </td>
+                    <td>
+                        <input type="button" value="+" onclick="display.value += '+'" />
+                    </td>
+                    <td>
+                        <input type="button" value="/" onclick="display.value += '/'" />
+                    </td>
+                    <td>
+                        <input type="button" value="tan" onclick="display.value += 'tan('" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="^" onclick="power()" /></td>
+                    <td><input type="button" value="π" onclick="pi()" /></td>
+                    <td><input type="button" value="e" onclick="e()" /></td>
+                    <td>
+                        <input type="button" value="(" onclick="display.value += '('" />
+                    </td>
+                    <td>
+                        <input type="button" value=")" onclick="display.value += ')'" />
+                    </td>
+                    <td><input type="button" value="log" onclick="base10Log()" /></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="button" value="√" onclick="squareRoot()" />
+                    </td>
+                    <td>
+                        <input type="button" value="ln2" onclick="display.value += Math.LN2" />
+                    </td>
+                    <td>
+                        <input type="button" value="log10" onclick="base10Log()" />
+                    </td>
+                    <td>
+                        <input type="button" value="l2e" onclick="display.value += Math.LOG2E" />
+                    </td>
+                    <td>
+                        <input type="button" value="l10e" onclick="display.value += Math.LOG10E" />
+                    </td>
+                    <td>
+                        <input type="button" value="exp" onclick="display.value += 'exp('" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="conversion-container">
+                            <select style="text-align: center" id="typeFrom" onchange="update()"
+                                class="conversion-element">
+                                <option value="10">DEC</option>
+                                <option value="2">BIN</option>
+                                <option value="8">OCT</option>
+                                <option value="16">HEX</option>
+                            </select>
+                            <input type="text" min="0" value="0" id="input" onkeyup="update()"
+                                class="conversion-element" />
+                            <select style="text-align: center" id="typeTo" onchange="update()"
+                                class="conversion-element">
+                                <option value="10">DEC</option>
+                                <option value="2">BIN</option>
+                                <option value="8">OCT</option>
+                                <option value="16">HEX</option>
+                            </select>
+                            <input id="res" type="text" min="0" value="0"
+                                class="conversion-element"  onkeyup="reverse()"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </main>
+</body>
+<script>
+    //калькулятор
+    function backspace() {
+        let display = document.getElementById('display');
+        display.value = display.value.slice(0, -1); //удаление последнего символа
+    }
+
+    function calculate() {
+        let display = document.getElementById('display');
+        let expression = display.value; //значение строки
+        let result;
+
+        try {
+            expression = expression.replace(/sin\(/g, 'sin(' + Math.PI / 180 + '*');
+            expression = expression.replace(/cos\(/g, 'cos(' + Math.PI / 180 + '*');
+            expression = expression.replace(/tan\(/g, 'tan(' + Math.PI / 180 + '*');
+            result = math.evaluate(expression); //расчет по введённой строке
+            display.value = result; //вывод результата в то же поле
+        } catch (error) {
+            display.value = 'Error'; //неверный ввод
+        }
+    }
+
+    function squareRoot() {
+        let display = document.getElementById('display');
+        display.value += 'sqrt(';
+    }
+
+    function base10Log() {
+        let display = document.getElementById('display');
+        display.value += 'log(';
+    }
+
+    function pi() {
+        let display = document.getElementById('display');
+        display.value += 'pi';
+    }
+
+    function e() {
+        let display = document.getElementById('display');
+        display.value += 'e';
+    }
+
+    function power() {
+        let display = document.getElementById('display');
+        display.value += '^(';
+    }
+    let typeFrom = document.getElementById('typeFrom'); //из х степени
+    let typeTo = document.getElementById('typeTo'); //в х степень
+    let res = document.getElementById('res');
+    let input = document.getElementById('input');
+    
+
+    const tags = {
+        //степени счисления
+        10: "DEC:",
+        2: "BIN:",
+        8: "OCT:",
+        16: "HEX:"
+    };
+
+    function update() {
+  
+        res.value = Number(parseInt(input.value, typeFrom.value)).toString(typeTo.value); //сам перевод
+    }
+
+    function reverse() {
+
+        input.value = Number(parseInt(res.value, typeTo.value)).toString(typeFrom.value); //сам перевод
+    }
+    update();
+</script>
+
+</html>
